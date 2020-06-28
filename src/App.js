@@ -109,6 +109,19 @@ class App extends Component {
     return result;
   }
 
+  _handleDelete = (id) => { // id yang berasal dari TaskItem yang dikirim ke TaskList lalu ditampung disini.
+    const { tasks } = this.state;  // const tasks = this.state.tasks
+    const index = this.findIndex(id); // buat variable index yang diisi dengan fungsi findIndex(id) dengan parameter id.
+    if(index !== -1) {  // Jika index tidak sama dengan -1.
+      tasks.splice(index, 1); // Array.splice(index, howmany) Menambah / menghapus item ke / dari array, dan mengembalikan item yang dihapus. namun method ini akan mengubah array asal.
+      this.setState({  // // Lalu ubah state nya menggunakan setState.
+        tasks: tasks
+      });
+      localStorage.setItem('tasks', JSON.stringify(tasks)); // Simpan ke localStorage.
+    }
+    this._handleCloseForm();
+  }
+
   render () {
     const { tasks, isDisplayForm } = this.state; // const tasks = this.state.tasks
     const elmTaskForm = isDisplayForm ? <TaskForm propsHandleSubmitDariApp={ this._handleSubmit }  propsCloseFormdariApp={ this._handleCloseForm } /> : '';  // Jika isDisplayForm true maka tampilkan <TaskForm /> jika false tetap pada tampilan awal.
@@ -141,7 +154,8 @@ class App extends Component {
             {/* List */}
             <TaskList 
               propsTasksDariApp={tasks} 
-              propsUpdateStatusDariApp={this._handleUpdateStatus} 
+              propsUpdateStatusDariApp={this._handleUpdateStatus}
+              propsHandleDeleteDariApp={this._handleDelete}
             />
           </div>
         </div>

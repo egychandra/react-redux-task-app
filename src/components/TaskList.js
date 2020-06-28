@@ -11,6 +11,7 @@ class TaskList extends Component {
                 index={index} 
                 propsTasksDariTaskList={task}
                 propsUpdateStatusDariTaskList={this.props.propsUpdateStatusDariApp}
+                propsHandleDeleteDariTaskList={this.props.propsHandleDeleteDariApp}
               />
     });
 
