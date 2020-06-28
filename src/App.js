@@ -80,6 +80,35 @@ class App extends Component {
     localStorage.setItem('tasks', JSON.stringify(tasks));
   }
 
+  // Fungsi untuk update status dari aktif ke tidak aktif atau sebaliknya.
+  _handleUpdateStatus = (id) => {  // id yang berasal dari TaskItem yang dikirim ke TaskList lalu ditampung disini.
+    // console.log(id);
+    const { tasks } = this.state;  // const tasks = this.state.tasks
+    const index = this.findIndex(id); // buat variable index yang diisi dengan fungsi findIndex(id) dengan parameter id.
+    // console.log(index);
+    if(index !== -1) {  // Jika index tidak sama dengan -1.
+      tasks[index].status = !tasks[index].status; // Maka tasks[index].status = tidak tasks[index].status 
+      this.setState({  // // Lalu ubah state nya menggunakan setState.
+        tasks: tasks
+      });
+      localStorage.setItem('tasks', JSON.stringify(tasks)); // Simpan ke localStorage.
+    }
+  }
+
+  // Fungsi untuk menemukan index.
+  findIndex = (id) => {
+    const { tasks } = this.state;  // const tasks = this.state.tasks
+    let result = -1;  // buat variable result yang diisi dengan value -1.
+    tasks.forEach((task, index) => {  // forEach() looping method yang tidak menghasilkan array baru. // tasks kita looping dengan 2 parameter value = task dan index.
+      if(task.id === id) {  // Jika task.id sama dengan id.
+        // console.log(index);
+        // return index;
+        result = index; // Maka ubah variable result dengan index dari tasks.
+      }
+    });
+    return result;
+  }
+
   render () {
     const { tasks, isDisplayForm } = this.state; // const tasks = this.state.tasks
     const elmTaskForm = isDisplayForm ? <TaskForm propsHandleSubmitDariApp={ this._handleSubmit }  propsCloseFormdariApp={ this._handleCloseForm } /> : '';  // Jika isDisplayForm true maka tampilkan <TaskForm /> jika false tetap pada tampilan awal.
@@ -90,27 +119,30 @@ class App extends Component {
         </div>
         <div className="row">
           <div className={ isDisplayForm ? 'col-xs-4 col-sm-4 col-md-4 col-lg-4' : '' }>
-            { elmTaskForm }
+            {elmTaskForm}
           </div>
           <div className={ isDisplayForm ? 'col-xs-8 col-sm-8 col-md-8 col-lg-8' : 'col-xs-12 col-sm-12 col-md-12 col-lg-12' }>
             <button 
               type="button" 
               className="btn btn-primary"
-              onClick={ this._handleToggleForm }
+              onClick={this._handleToggleForm}
               >
               <span className="fa fa-plus mr-5"></span>Tambah Pekerjaan
             </button>
             <button 
               type="button" 
               className="btn btn-danger ml-5"
-              onClick={ this._handleGenerateData }
+              onClick={this._handleGenerateData}
             >
               Generate Data
             </button>
             {/* Search and Sort */}
             <TaskControl />
             {/* List */}
-            <TaskList propsTasksDariApp={ tasks } />
+            <TaskList 
+              propsTasksDariApp={tasks} 
+              propsUpdateStatusDariApp={this._handleUpdateStatus} 
+            />
           </div>
         </div>
       </div>

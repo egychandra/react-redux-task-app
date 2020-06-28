@@ -6,9 +6,13 @@ class TaskList extends Component {
 
     const { propsTasksDariApp } = this.props; // const tasks = this.props.tasks;
     const elmTasks = propsTasksDariApp.map((task, index) => {
-      return <TaskItem key={ task.id } index={ index } propsTasksDariTaskList={ task } />
+      return <TaskItem 
+                key={task.id} 
+                index={index} 
+                propsTasksDariTaskList={task}
+                propsUpdateStatusDariTaskList={this.props.propsUpdateStatusDariApp}
+              />
     });
-
 
     return (
       <table className="table table-bordered table-hover mt-15">

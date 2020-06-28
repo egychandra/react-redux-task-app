@@ -1,6 +1,12 @@
 import React, { Component } from 'react';
 
 class TaskItem extends Component {
+
+  // Fungsi untuk update status dari aktif ke tidak aktif maupun sebaliknya yang menerima props dari TaskList dan mengembalikan argument berupa id ke TasKList yang kemudian dikirim ke App.  
+  _handleUpdateStatus = () => {
+    this.props.propsUpdateStatusDariTaskList(this.props.propsTasksDariTaskList.id);
+  }
+
   render() {
     const { propsTasksDariTaskList, index } = this.props;  // const task = this.props.task;  // props ini hasil dari tasks.map yang diambil dari <TaskItem /> di component TaskList.js
     return (
@@ -10,7 +16,10 @@ class TaskItem extends Component {
         <td>{ propsTasksDariTaskList.name }</td>
         <td className="text-center">
           {/* jika propsTasksDariTaskList.status sama dengan true maka ya/true tampilkan label-danger tidak/false tampilkan label-success */}
-          <span className={ propsTasksDariTaskList.status === true ? 'label label-success' : 'label label-danger' }>
+          <span 
+            className={ propsTasksDariTaskList.status === true ? 'label label-success' : 'label label-danger' }
+            onClick={this._handleUpdateStatus}
+          >
             {/* jika propsTasksDariTaskList.status sama dengan true maka ya/true tampilkan Tidak Aktif tidak/false tampilkan Aktif */}
             { propsTasksDariTaskList.status === true ? 'Aktif' : 'Tidak Aktif' }
           </span>
