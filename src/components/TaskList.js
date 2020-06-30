@@ -2,8 +2,30 @@ import React, { Component } from 'react';
 import TaskItem from './TaskItem';
 
 class TaskList extends Component {
-  render() {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      filterName: '',
+      filterStatus: -1 // All: -1, Aktif: 0, Tidak Aktif: 1
+    }
+  }
+
+  _handleChange =  event => {
+    const target = event.target;
+    const name = target.name;
+    let value = target.value;
+    this.props.propsHandleChangeDariApp(
+      name === 'filterName' ? value : this.state.filterName,
+      name === 'filterStatus' ? value : this.state.filterStatus
+    )
+    this.setState({
+      [name]: value
+    })
+  }
+
+  render() {
+    const { filterName, filterStatus } = this.state;
     const { propsTasksDariApp } = this.props; // const tasks = this.props.tasks;
     const elmTasks = propsTasksDariApp.map((task, index) => {
       return <TaskItem 
@@ -34,12 +56,16 @@ class TaskList extends Component {
                 type="text" 
                 className="form-control"
                 name="filterName"
+                value={filterName}
+                onChange={this._handleChange}
               />
             </td>
             <td>
               <select 
                 className="form-control"
                 name="filterStatus"
+                value={filterStatus}
+                onChange={this._handleChange}
               >
                 <option value={-1}>Semua</option>
                 <option value={0}>Aktif</option>

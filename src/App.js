@@ -11,7 +11,11 @@ class App extends Component {
     this.state = {  // Mendeklarasikan suatu objek.
       tasks: [], //  berisi id: unique, name, status yang diambil dari _handleGenerateData.
       isDisplayForm: false,  // state untuk display form tambah pekerjaan dengan value awal false.
-      taskEdit: null  // state untuk menampung task yang akan diedit dengan value awal null.
+      taskEdit: null,  // state untuk menampung task yang akan diedit dengan value awal null.
+      filter: {
+        name: '',
+        status: -1
+      }
     }
   }
 
@@ -160,8 +164,38 @@ class App extends Component {
     this._handleOpenForm();
   }
 
+  _handleChange = (filterName, filterStatus) => {
+    // console.log(filterName, '-', filterStatus);
+    // console.log(typeof filterStatus);
+    filterStatus = parseInt(filterStatus, 10);
+    // console.log(typeof filterStatus);
+    this.setState({
+      filter: {
+        name: filterName.toLowerCase(),
+        status: filterStatus
+      }
+    })
+  }
+
   render () {
-    const { tasks, isDisplayForm, taskEdit } = this.state; // const tasks = this.state.tasks
+    const { isDisplayForm, taskEdit, filter } = this.state;
+    let { tasks } = this.state;
+    // console.log(filter);
+    // Render filter berdasarkan name dan status pada TaskList
+    if(filter) {  // Jika filter ada value
+      if(filter.name) { // Jika filter adalah name
+        tasks = tasks.filter(task => { // Maka data tasks difilter dengan memberi parameter task(nama parameter bebas)
+          return task.name.toLowerCase().indexOf(filter.name) !== -1;  // Tampilkan data task name dengan index dari data filter name yang tidak sama dengan -1(all). toLowerCase() method untuk tidak memperdulikan huruf kecil atau besar dan indexOf() untuk menemukan index
+        });
+      }
+      tasks = tasks.filter(task => {  // Data tasks difilter dengan memberi parameter task(nama parameter bebas)
+        if(filter.status === -1) {  // Jika data filter status sama dengan -1(All)
+          return task; // Tampilkan task
+        }else {  // Jika data filter status tidak sama dengan -1(All)
+          return task.status === (filter.status !== 1 ? true : false)  // Tampilkan data task status sama dengan (jika data filter status tidak sama dengan 1(Tidak Aktif) maka benar/true tampilkan true salah/false tampilkan false)
+        }
+      });
+    }
     const elmTaskForm = isDisplayForm ? 
       <TaskForm 
         propsHandleSubmitDariApp={ this._handleSubmit }  
@@ -203,6 +237,7 @@ class App extends Component {
               propsUpdateStatusDariApp={this._handleUpdateStatus}
               propsHandleDeleteDariApp={this._handleDelete}
               propsHandleEditDariApp={this._handleEdit}
+              propsHandleChangeDariApp={this._handleChange}
             />
           </div>
         </div>
