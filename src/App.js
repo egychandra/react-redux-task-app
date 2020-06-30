@@ -15,7 +15,8 @@ class App extends Component {
       filter: {
         name: '',
         status: -1
-      }
+      },
+      keyword: ''
     }
   }
 
@@ -32,17 +33,17 @@ class App extends Component {
     let tasks = [
       {
         id: this.generateID(),
-        name: 'Bapuk 1',
+        name: 'Belajar HTML5',
         status: true
       },
       {
         id: this.generateID(),
-        name: 'Bapuk 2',
+        name: 'Belajar CSS3',
         status: false
       },
       {
         id: this.generateID(),
-        name: 'Bapuk 3',
+        name: 'Belajar Javascript',
         status: true
       }
     ];
@@ -107,7 +108,7 @@ class App extends Component {
   }
 
   // Fungsi untuk update status dari aktif ke tidak aktif atau sebaliknya.
-  _handleUpdateStatus = (id) => {  // id yang berasal dari TaskItem yang dikirim ke TaskList lalu ditampung disini.
+  _handleUpdateStatus = id => {  // id yang berasal dari TaskItem yang dikirim ke TaskList lalu ditampung disini.
     // console.log(id);
     const { tasks } = this.state;  // const tasks = this.state.tasks
     const index = this.findIndex(id); // buat variable index yang diisi dengan fungsi findIndex(id) dengan parameter id.
@@ -122,7 +123,7 @@ class App extends Component {
   }
 
   // Fungsi untuk menemukan index.
-  findIndex = (id) => {
+  findIndex = id => {
     const { tasks } = this.state;  // const tasks = this.state.tasks
     let result = -1;  // buat variable result yang diisi dengan value -1.
     tasks.forEach((task, index) => {  // forEach() looping method yang tidak menghasilkan array baru. // tasks kita looping dengan 2 parameter value = task dan index.
@@ -135,7 +136,7 @@ class App extends Component {
     return result;
   }
 
-  _handleDelete = (id) => { // id yang berasal dari TaskItem yang dikirim ke TaskList lalu ditampung disini.
+  _handleDelete = id => { // id yang berasal dari TaskItem yang dikirim ke TaskList lalu ditampung disini.
     const { tasks } = this.state;  // const tasks = this.state.tasks
     const index = this.findIndex(id); // buat variable index yang diisi dengan fungsi findIndex(id) dengan parameter id.
     if(index !== -1) {  // Jika index tidak sama dengan -1.
@@ -148,7 +149,7 @@ class App extends Component {
     this._handleCloseForm();
   }
 
-  _handleEdit = (id) => {
+  _handleEdit = id => {
     // console.log(id);
     const { tasks } = this.state;  // const tasks = this.state.tasks
     const index = this.findIndex(id); // buat variable index yang diisi dengan fungsi findIndex(id) dengan parameter id.
@@ -177,10 +178,19 @@ class App extends Component {
     })
   }
 
+  // Fungsi untuk melakukan pencarian berdasarkan kata kunci
+  _handleSearch = keyword => { // Memberikan parameter keyword untuk menampung data keyword yang dikirim dari TaskSearch > TaskControl > App 
+    // console.log(keyword);
+    this.setState({ // Ubah/isi state keyword yang ada di App dengan data keyword dari TaskSearch
+      keyword: keyword
+    })
+  }
+
   render () {
-    const { isDisplayForm, taskEdit, filter } = this.state;
+    const { isDisplayForm, taskEdit, filter, keyword } = this.state;
     let { tasks } = this.state;
     // console.log(filter);
+
     // Render filter berdasarkan name dan status pada TaskList
     if(filter) {  // Jika filter ada value
       if(filter.name) { // Jika filter adalah name
@@ -196,10 +206,18 @@ class App extends Component {
         }
       });
     }
+
+    // Render pencarian berdasarkan kata kunci TaskSearch > TaskControl > App
+    if(keyword) { // Jika keyword ada value  
+      tasks = tasks.filter(task => { // Maka data tasks difilter dengan memberi parameter task(nama parameter bebas)
+        return task.name.toLowerCase().indexOf(keyword) !== -1;  // Tampilkan data task name dengan index dari data keyword yang tidak sama dengan -1(all). toLowerCase() method untuk tidak memperdulikan huruf kecil atau besar dan indexOf() untuk menemukan index
+      });
+    }
+
     const elmTaskForm = isDisplayForm ? 
       <TaskForm 
-        propsHandleSubmitDariApp={ this._handleSubmit }  
-        propsCloseFormdariApp={ this._handleCloseForm } 
+        propsHandleSubmitDariApp={this._handleSubmit}  
+        propsCloseFormdariApp={this._handleCloseForm} 
         propsHandleEditFormDariApp={taskEdit} 
       /> 
       : '';  // Jika isDisplayForm true maka tampilkan <TaskForm /> jika false tetap pada tampilan awal.
@@ -230,7 +248,7 @@ class App extends Component {
               Generate Data
             </button>
             {/* Search and Sort */}
-            <TaskControl />
+            <TaskControl propsHandleSearchDariApp={this._handleSearch} />
             {/* List */}
             <TaskList 
               propsTasksDariApp={tasks} 

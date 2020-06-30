@@ -3,10 +3,13 @@ import TaskSearch from './TaskSearch';
 import TaskSort from './TaskSort';
 
 class TaskControl extends Component {
+
   render () {
     return (
       <div className="row mt-15">
-        <TaskSearch />
+        {/* Search */}
+        <TaskSearch propsHandleSearchDariTaskControl={this.props.propsHandleSearchDariApp} />
+        {/* Sort */}
         <TaskSort />
       </div>
     )
