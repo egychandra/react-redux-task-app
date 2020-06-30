@@ -11,6 +11,7 @@ class App extends Component {
     this.state = {  // Mendeklarasikan suatu objek.
       tasks: [], //  berisi id: unique, name, status yang diambil dari _handleGenerateData.
       isDisplayForm: false,  // state untuk display form tambah pekerjaan dengan value awal false.
+      taskEdit: null  // state untuk menampung task yang akan diedit dengan value awal null.
     }
   }
 
@@ -41,13 +42,13 @@ class App extends Component {
         status: true
       }
     ];
-    this.setState({  // Method untuk mengubah state.
+    this.setState({  // Method untuk mengubah state
       tasks: tasks
     });
-    localStorage.setItem('tasks', JSON.stringify(tasks));  // untuk menset localStorage, terdapat 2 parameter keyName dan valueName. JSON.stringify() untuk mengubah javascript object menjadi string JSON.
+    localStorage.setItem('tasks', JSON.stringify(tasks));  // untuk menset localStorage, terdapat 2 parameter keyName dan valueName. JSON.stringify() untuk mengubah javascript object menjadi string JSON
   }
 
-  s4 () { // Fungsi untuk membuat unique id, setiap s4 berisi 4 karakter baik integer maupun number.
+  s4 () { // Fungsi untuk membuat unique id, setiap s4 berisi 4 karakter baik integer maupun number
     return Math.floor((1+Math.random()) * 0x10000).toString(16).substring(1);
   }
 
@@ -56,10 +57,18 @@ class App extends Component {
   }
 
   // Fungsi untuk membuka dan menutup form pada tombol tambah pekerjaan. 
-  _handleToggleForm = () => {
-    this.setState({
-      isDisplayForm: !this.state.isDisplayForm
-    });
+  _handleToggleForm = () => {  // Tambahkan pekerjaan
+    if(this.state.isDisplayForm && this.state.taskEdit !== null) {  // Jika isDisplayForm dan taskEdit tidak sama dengan bernilai null
+      this.setState({  // true ubah state
+        isDisplayForm: true,
+        taskEdit: null
+      });
+    }else {
+      this.setState({  // false ubah state
+        isDisplayForm: !this.state.isDisplayForm,
+        taskEdit: null
+      });
+    }
   }
 
   // Fungsi untuk menutup form dan dikirim ke TaskForm sebagai props.
@@ -69,13 +78,26 @@ class App extends Component {
     });
   }
 
+  _handleOpenForm = () => {
+    this.setState({
+      isDisplayForm: true
+    });
+  }
+
   // Fungsi untuk menyimpan form dan dikirim ke TaskForm sebagai props, fungsi ini menerima data yang ditampung dalam parameter yang didapat dari argument berupa this.state yang ada di TaskForm. 
   _handleSubmit = data => {
     const { tasks } = this.state;  // const tasks = this.state.tasks 
-    data.id = this.generateID();  // menambahkan id ke dalam data.
-    tasks.push(data);  // tasks akan diisi oleh data(id, name, status) sesuai yang diinputkan oleh user.
+    if(data.id === '') {
+      data.id = this.generateID();  // menambahkan id ke dalam data
+      tasks.push(data);  // tasks akan diisi oleh data(id, name, status) sesuai yang diinputkan oleh user
+    } else {
+      // Editing
+      const index = this.findIndex(data.id);
+      tasks[index] = data;
+    }
     this.setState({  // Lalu ubah state nya menggunakan setState.
-      tasks: tasks
+      tasks: tasks,
+      taskEdit: null
     });
     localStorage.setItem('tasks', JSON.stringify(tasks));
   }
@@ -122,18 +144,42 @@ class App extends Component {
     this._handleCloseForm();
   }
 
+  _handleEdit = (id) => {
+    // console.log(id);
+    const { tasks } = this.state;  // const tasks = this.state.tasks
+    const index = this.findIndex(id); // buat variable index yang diisi dengan fungsi findIndex(id) dengan parameter id.
+    // console.log(index);
+    const taskEdit = tasks[index];
+    this.setState({
+      taskEdit: taskEdit
+    });
+    // this.setState({
+    //   taskEdit: tasks[index]
+    // });
+    // console.log(this.state.taskEdit);
+    this._handleOpenForm();
+  }
+
   render () {
-    const { tasks, isDisplayForm } = this.state; // const tasks = this.state.tasks
-    const elmTaskForm = isDisplayForm ? <TaskForm propsHandleSubmitDariApp={ this._handleSubmit }  propsCloseFormdariApp={ this._handleCloseForm } /> : '';  // Jika isDisplayForm true maka tampilkan <TaskForm /> jika false tetap pada tampilan awal.
+    const { tasks, isDisplayForm, taskEdit } = this.state; // const tasks = this.state.tasks
+    const elmTaskForm = isDisplayForm ? 
+      <TaskForm 
+        propsHandleSubmitDariApp={ this._handleSubmit }  
+        propsCloseFormdariApp={ this._handleCloseForm } 
+        propsHandleEditFormDariApp={taskEdit} 
+      /> 
+      : '';  // Jika isDisplayForm true maka tampilkan <TaskForm /> jika false tetap pada tampilan awal.
     return (
       <div className="container">
         <div className="text-center">
           <h1>ReactJS CRUD</h1><hr/>
         </div>
         <div className="row">
+          {/* Jika isDisplayForm === 'true' benar/true tampilkan col4 salah/false tampilkan kosong/empty */}
           <div className={ isDisplayForm ? 'col-xs-4 col-sm-4 col-md-4 col-lg-4' : '' }>
             {elmTaskForm}
           </div>
+          {/* Jika isDisplayForm === 'true' benar/true tampilkan col8 salah/false tampilkan col12*/}
           <div className={ isDisplayForm ? 'col-xs-8 col-sm-8 col-md-8 col-lg-8' : 'col-xs-12 col-sm-12 col-md-12 col-lg-12' }>
             <button 
               type="button" 
@@ -156,6 +202,7 @@ class App extends Component {
               propsTasksDariApp={tasks} 
               propsUpdateStatusDariApp={this._handleUpdateStatus}
               propsHandleDeleteDariApp={this._handleDelete}
+              propsHandleEditDariApp={this._handleEdit}
             />
           </div>
         </div>

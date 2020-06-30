@@ -1,11 +1,43 @@
 import React, { Component } from 'react';
 
 class TaskForm extends Component {
+
   constructor(props) {
     super(props);
     this.state = {
-      name: '',
-      status: false
+      id: '',  // State untuk menampung data id
+      name: '',  // State untuk menampung data name
+      status: false  // State untuk menampung data status
+    }
+  }
+
+  componentWillMount() {  // Ketika tombol sunting diklik method ini langsung dijalankan.
+    // console.log('componentWillMount');
+    const { propsHandleEditFormDariApp } = this.props;
+    if(propsHandleEditFormDariApp) {  // Jika propsHandleEditFormDariApp ada value
+      this.setState({  // Maka ubah state
+        id: propsHandleEditFormDariApp.id,
+        name: propsHandleEditFormDariApp.name,
+        status: propsHandleEditFormDariApp.status
+      });
+      // console.log(this.state);
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {  //fungsi ini akan dieksekusi bila state yang ada di component akan diupdate atau diubah dengan nilai props yang baru. jadi ketika klik tombol sunting maka semua data yang akan diedit akan tampil di form edit
+    // console.log(nextProps);
+    if(nextProps && nextProps.propsHandleEditFormDariApp) {  // Jika nextProps dan nextProps.propsHandleEditFormDariApp (form memperbarui pekerjaan) ada value
+      this.setState({ // True maka ubah state dengan semua data yang baru
+        id: nextProps.propsHandleEditFormDariApp.id,
+        name: nextProps.propsHandleEditFormDariApp.name,
+        status: nextProps.propsHandleEditFormDariApp.status
+      });
+    }else if(!nextProps.propsHandleEditFormDariApp) {  // Jika tidak nextProps.propsHandleEditFormDariApp (form tambahkan pekerjaan)
+      this.setState({  //  False maka ubah state berdasarkan data default
+        id: '',
+        name: '',
+        status: false
+      });
     }
   }
 
@@ -44,11 +76,13 @@ class TaskForm extends Component {
   }
 
   render () {
+    const { id } = this.state;
     return (
       <div className="panel panel-warning">
         <div className="panel-heading">
           <h3 className="panel-title">
-            Tambahkan Pekerjan
+            {/* Jika id tidak sama dengan kosong/empty benar/true tampilkan Memperbarui Pekerjaan salah/false tampilkan Tambahkan Pekerjaan */}
+            { id !== '' ? 'Memperbarui Pekerjaan' : 'Tambahkan Pekerjan' }
             <span 
               className="fa fa-times-circle text-right"
               onClick={ this._handleCloseForm }
