@@ -10,7 +10,11 @@ class TaskControl extends Component {
         {/* Search */}
         <TaskSearch propsHandleSearchDariTaskControl={this.props.propsHandleSearchDariApp} />
         {/* Sort */}
-        <TaskSort />
+        <TaskSort 
+          propsHandleSortDariTaskControl={this.props.prospHandleSortDariApp} 
+          propsSortByNameDariTaskList={this.props.propsSortByNameDariApp}
+          propsSortByValueDariTaskList={this.props.propsSortByValueDariApp}
+        />
       </div>
     )
   }

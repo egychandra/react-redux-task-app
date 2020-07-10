@@ -16,7 +16,9 @@ class App extends Component {
         name: '',
         status: -1
       },
-      keyword: ''
+      keyword: '',
+      sortByName: 'name',
+      sortByValue: 1
     }
   }
 
@@ -186,8 +188,18 @@ class App extends Component {
     })
   }
 
+  _handleSort = (sortByName, sortByValue) => {
+    // console.log(sortByName, '-', sortByValue);
+    this.setState({
+      sortByName: sortByName,
+      sortByValue: sortByValue
+    });
+    // console.log(this.state.sortByName, '-', this.state.sortByValue);
+  }
+
   render () {
-    const { isDisplayForm, taskEdit, filter, keyword } = this.state;
+
+    const { isDisplayForm, taskEdit, filter, keyword, sortByName, sortByValue } = this.state;
     let { tasks } = this.state;
     // console.log(filter);
 
@@ -214,6 +226,21 @@ class App extends Component {
       });
     }
 
+    // Render pengurutan/sort berdasarkan sortByName dan sortByValue TaskSort > TaskControl > App
+    if(sortByName === 'name') {  // Jika sortByName sama dengan 'name'
+      tasks.sort((task, index) => { // Data tasks diurutkan dengan method sort yang berisi parameter task sebagai value dan index sebagai index
+        if(task.name > index.name) return sortByValue; // Jika task.name lebih besar dari index.name, maka tampilkan sortByvalue(1)
+        else if(task.name < index.name) return -sortByValue; // Sebaliknya jika task.name lebih kecil dari index.name, maka tampilkan -sortByValue(-1)
+        else return 0; // Jika kondisi di atas tidak terpenuhi makan return 0 atau data tidak ditemukan. 
+      });
+    }else {  // Pengkondisian lainnya ketika user mengurutkan/sort berdasarkan status
+      tasks.sort((task, index) => {
+        if(task.status > index.status) return -sortByValue;
+        else if(task.status < index.status) return sortByValue;
+        else return 0;
+      });
+    }
+
     const elmTaskForm = isDisplayForm ? 
       <TaskForm 
         propsHandleSubmitDariApp={this._handleSubmit}  
@@ -221,6 +248,7 @@ class App extends Component {
         propsHandleEditFormDariApp={taskEdit} 
       /> 
       : '';  // Jika isDisplayForm true maka tampilkan <TaskForm /> jika false tetap pada tampilan awal.
+
     return (
       <div className="container">
         <div className="text-center">
@@ -248,7 +276,12 @@ class App extends Component {
               Generate Data
             </button>
             {/* Search and Sort */}
-            <TaskControl propsHandleSearchDariApp={this._handleSearch} />
+            <TaskControl 
+              propsHandleSearchDariApp={this._handleSearch}
+              prospHandleSortDariApp={this._handleSort}
+              propsSortByNameDariApp={sortByName}
+              propsSortByValueDariApp={sortByValue}
+            />
             {/* List */}
             <TaskList 
               propsTasksDariApp={tasks} 
