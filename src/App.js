@@ -3,6 +3,7 @@ import './App.css';
 import TaskForm from './components/TaskForm';
 import TaskControl from './components/TaskControl';
 import TaskList from './components/TaskList';
+import _ from 'lodash';
 
 class App extends Component {
 
@@ -113,7 +114,10 @@ class App extends Component {
   _handleUpdateStatus = id => {  // id yang berasal dari TaskItem yang dikirim ke TaskList lalu ditampung disini.
     // console.log(id);
     const { tasks } = this.state;  // const tasks = this.state.tasks
-    const index = this.findIndex(id); // buat variable index yang diisi dengan fungsi findIndex(id) dengan parameter id.
+    // const index = this.findIndex(id); // buat variable index yang diisi dengan fungsi findIndex(id) dengan parameter id //  non lodash
+    const index = _.findIndex(tasks, task => {  // buat variable index yang diisi dengan fungsi findIndex(id) dengan parameter id // Lodash
+      return task.id === id;
+    });
     // console.log(index);
     if(index !== -1) {  // Jika index tidak sama dengan -1.
       tasks[index].status = !tasks[index].status; // Maka tasks[index].status = tidak tasks[index].status 
@@ -206,8 +210,11 @@ class App extends Component {
     // Render filter berdasarkan name dan status pada TaskList
     if(filter) {  // Jika filter ada value
       if(filter.name) { // Jika filter adalah name
-        tasks = tasks.filter(task => { // Maka data tasks difilter dengan memberi parameter task(nama parameter bebas)
-          return task.name.toLowerCase().indexOf(filter.name) !== -1;  // Tampilkan data task name dengan index dari data filter name yang tidak sama dengan -1(all). toLowerCase() method untuk tidak memperdulikan huruf kecil atau besar dan indexOf() untuk menemukan index
+        // tasks = tasks.filter(task => { // Maka data tasks difilter dengan memberi parameter task(nama parameter bebas)
+        //   return task.name.toLowerCase().indexOf(filter.name) !== -1;  // Tampilkan data task name dengan index dari data filter name yang tidak sama dengan -1(all). toLowerCase() method untuk tidak memperdulikan huruf kecil atau besar dan indexOf() untuk menemukan index
+        // }); // Non lodash
+        tasks = _.filter(tasks, task => {  // Lodash
+          return task.name.toLowerCase().indexOf(filter.name) !== -1;
         });
       }
       tasks = tasks.filter(task => {  // Data tasks difilter dengan memberi parameter task(nama parameter bebas)
