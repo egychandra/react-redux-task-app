@@ -1,5 +1,5 @@
 {
-  "name": "react-crud",
+  "name": "react-redux-task-app",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
