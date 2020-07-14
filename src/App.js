@@ -5,6 +5,8 @@ import TaskControl from './components/TaskControl';
 import TaskList from './components/TaskList';
 import _ from 'lodash';
 // import demo from './training/demo';
+import { connect } from 'react-redux';
+import * as actions from './actions/index';
 
 class App extends Component {
 
@@ -12,7 +14,7 @@ class App extends Component {
     super(props);  // Mengeksekusi konstruktor dari induk class, yakni React.Component.
     this.state = {  // Mendeklarasikan suatu objek.
       // tasks: [], //  berisi id: unique, name, status yang diambil dari _handleGenerateData.
-      isDisplayForm: false,  // state untuk display form tambah pekerjaan dengan value awal false.
+      // isDisplayForm: false,  // state untuk display form tambah pekerjaan dengan value awal false.
       taskEdit: null,  // state untuk menampung task yang akan diedit dengan value awal null.
       filter: {
         name: '',
@@ -67,25 +69,26 @@ class App extends Component {
 
   // Fungsi untuk membuka dan menutup form pada tombol tambah pekerjaan. 
   _handleToggleForm = () => {  // Tambahkan pekerjaan
-    if(this.state.isDisplayForm && this.state.taskEdit !== null) {  // Jika isDisplayForm dan taskEdit tidak sama dengan bernilai null
-      this.setState({  // true ubah state
-        isDisplayForm: true,
-        taskEdit: null
-      });
-    }else {
-      this.setState({  // false ubah state
-        isDisplayForm: !this.state.isDisplayForm,
-        taskEdit: null
-      });
-    }
+    // if(this.state.isDisplayForm && this.state.taskEdit !== null) {  // Jika isDisplayForm dan taskEdit tidak sama dengan bernilai null
+    //   this.setState({  // true ubah state
+    //     isDisplayForm: true,
+    //     taskEdit: null
+    //   });
+    // }else {
+    //   this.setState({  // false ubah state
+    //     isDisplayForm: !this.state.isDisplayForm,
+    //     taskEdit: null
+    //   });
+    // }
+    this.props.onToggleForm();
   }
 
   // Fungsi untuk menutup form dan dikirim ke TaskForm sebagai props.
-  _handleCloseForm = () => {
-    this.setState({
-      isDisplayForm: false
-    });
-  }
+  // _handleCloseForm = () => {
+  //   this.setState({
+  //     isDisplayForm: false
+  //   });
+  // }
 
   _handleOpenForm = () => {
     this.setState({
@@ -94,22 +97,23 @@ class App extends Component {
   }
 
   // Fungsi untuk menyimpan form dan dikirim ke TaskForm sebagai props, fungsi ini menerima data yang ditampung dalam parameter yang didapat dari argument berupa this.state yang ada di TaskForm. 
-  _handleSubmit = data => {
-    const { tasks } = this.state;  // const tasks = this.state.tasks 
-    if(data.id === '') {
-      data.id = this.generateID();  // menambahkan id ke dalam data
-      tasks.push(data);  // tasks akan diisi oleh data(id, name, status) sesuai yang diinputkan oleh user
-    } else {
-      // Editing
-      const index = this.findIndex(data.id);
-      tasks[index] = data;
-    }
-    this.setState({  // Lalu ubah state nya menggunakan setState.
-      tasks: tasks,
-      taskEdit: null
-    });
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-  }
+  // _handleSubmit = data => {
+  //   const { tasks } = this.state;  // const tasks = this.state.tasks 
+  //   data.status = data.status === 'true' ? true : false;
+  //   if(data.id === '') {
+  //     data.id = this.generateID();  // menambahkan id ke dalam data
+  //     tasks.push(data);  // tasks akan diisi oleh data(id, name, status) sesuai yang diinputkan oleh user
+  //   } else {
+  //     // Editing
+  //     const index = this.findIndex(data.id);
+  //     tasks[index] = data;
+  //   }
+  //   this.setState({  // Lalu ubah state nya menggunakan setState.
+  //     tasks: tasks,
+  //     taskEdit: null
+  //   });
+  //   localStorage.setItem('tasks', JSON.stringify(tasks));
+  // }
 
   // Fungsi untuk update status dari aktif ke tidak aktif atau sebaliknya.
   _handleUpdateStatus = id => {  // id yang berasal dari TaskItem yang dikirim ke TaskList lalu ditampung disini.
@@ -205,13 +209,16 @@ class App extends Component {
   render () {
 
     const { 
-      isDisplayForm, 
+      // isDisplayForm, 
       taskEdit, 
       // filter, 
       // keyword, 
       sortByName, 
       sortByValue 
     } = this.state;
+
+    const { isDisplayForm } = this.props;
+
     // let { tasks } = this.state;
     // console.log(filter);
 
@@ -258,8 +265,8 @@ class App extends Component {
 
     const elmTaskForm = isDisplayForm ? 
       <TaskForm 
-        propsHandleSubmitDariApp={this._handleSubmit}  
-        propsCloseFormdariApp={this._handleCloseForm} 
+        // propsHandleSubmitDariApp={this._handleSubmit}  
+        // propsCloseFormdariApp={this._handleCloseForm} 
         propsHandleEditFormDariApp={taskEdit} 
       /> 
       : '';  // Jika isDisplayForm true maka tampilkan <TaskForm /> jika false tetap pada tampilan awal.
@@ -312,4 +319,18 @@ class App extends Component {
   }
 }
 
-export default App;
+const mapStateToProps = state => {
+  return {
+    isDisplayForm: state.isDisplayForm
+  }
+};
+
+const mapDispatchToProps = (dispatch, props) => {
+  return {
+    onToggleForm: () => {
+      dispatch(actions.toggleForm());
+    }
+  }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

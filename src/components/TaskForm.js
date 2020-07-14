@@ -45,16 +45,16 @@ class TaskForm extends Component {
 
   // Fungsi untuk menutup form dengan props yang diambil dari <App />
   _handleCloseForm = () => {
-    this.props.propsCloseFormdariApp();
+    this.props.onCloseForm();
   }
 
   _handleChange = event => {
     const target = event.target;
     const name = target.name;
-    let value = target.value;
-    if(name === 'status') {  // Jika name sama dengan status
-      value = target.value === 'true' ? true : false;  // Maka ubah variabel value dengan pengkondisian yang mengembalikan nilai boolean. 
-    }
+    let value = target.type === 'checkbox' ? target.checked : target.value;
+    // if(name === 'status') {  // Jika name sama dengan status
+    //   value = target.value === 'true' ? true : false;  // Maka ubah variabel value dengan pengkondisian yang mengembalikan nilai boolean. 
+    // }
     this.setState({  // setiap name yang ada pada inputan akan diisi value yang diinputkan oleh user. 
       [name]: value
     });
@@ -144,6 +144,9 @@ const mapDispatchToProps = (dispatch, props) => {
   return {
     onAddTask: task => {
       dispatch(actions.addTask(task));
+    },
+    onCloseForm: () => {
+      dispatch(actions.closeForm());
     }
   }
 }
