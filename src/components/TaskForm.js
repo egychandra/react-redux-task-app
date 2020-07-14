@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import * as actions from '../actions/index';
 
 class TaskForm extends Component {
 
@@ -61,7 +63,8 @@ class TaskForm extends Component {
   // Fungsi untuk menyimpan form dengan menerima props dari App dan mengembalikan argument berupa this.state yang berisi data name, status ke App.
   _handleSubmit = event => {
     event.preventDefault();
-    this.props.propsHandleSubmitDariApp(this.state);
+    this.props.onAddTask(this.state);
+    // this.props.propsHandleSubmitDariApp(this.state);
     // Gunakan fungsi clear dan close ketika tombol submit diklik.
     this._handleClear();
     this._handleCloseForm();
@@ -131,4 +134,18 @@ class TaskForm extends Component {
   }
 }
 
-export default TaskForm;
+const mapStateToProps = state => {
+  return {
+    
+  }
+}
+
+const mapDispatchToProps = (dispatch, props) => {
+  return {
+    onAddTask: task => {
+      dispatch(actions.addTask(task));
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(TaskForm);

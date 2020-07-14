@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import TaskItem from './TaskItem';
+import { connect } from 'react-redux';
 
 class TaskList extends Component {
 
@@ -14,7 +15,7 @@ class TaskList extends Component {
   _handleChange =  event => {
     const target = event.target;
     const name = target.name;
-    let value = target.value;
+    let value = target.type === 'checkbox' ? target.checked : target.value;
     this.props.propsHandleChangeDariApp(
       name === 'filterName' ? value : this.state.filterName,
       name === 'filterStatus' ? value : this.state.filterStatus
@@ -25,9 +26,12 @@ class TaskList extends Component {
   }
 
   render() {
+    // console.log(this.props.tasks);
     const { filterName, filterStatus } = this.state;
-    const { propsTasksDariApp } = this.props; // const tasks = this.props.tasks;
-    const elmTasks = propsTasksDariApp.map((task, index) => {
+    // const { propsTasksDariApp } = this.props; // const propsTasksDariApp = this.props.propsTasksDariApp;
+    const { tasks } = this.props;  // const tasks = this.props.tasks
+    // const elmTasks = propsTasksDariApp.map((task, index) => {
+    const elmTasks = tasks.map((task, index) => {
       return <TaskItem 
                 key={task.id} 
                 index={index} 
@@ -81,4 +85,10 @@ class TaskList extends Component {
   }
 }
 
-export default TaskList;
+const mapStateToProps = (state) => {
+  return {
+    tasks: state.tasks
+  }
+}
+
+export default connect(mapStateToProps, null)(TaskList);

@@ -4,14 +4,14 @@ import TaskForm from './components/TaskForm';
 import TaskControl from './components/TaskControl';
 import TaskList from './components/TaskList';
 import _ from 'lodash';
-import demo from './training/demo';
+// import demo from './training/demo';
 
 class App extends Component {
 
   constructor(props) {  // Inisialisasi komponen React.
     super(props);  // Mengeksekusi konstruktor dari induk class, yakni React.Component.
     this.state = {  // Mendeklarasikan suatu objek.
-      tasks: [], //  berisi id: unique, name, status yang diambil dari _handleGenerateData.
+      // tasks: [], //  berisi id: unique, name, status yang diambil dari _handleGenerateData.
       isDisplayForm: false,  // state untuk display form tambah pekerjaan dengan value awal false.
       taskEdit: null,  // state untuk menampung task yang akan diedit dengan value awal null.
       filter: {
@@ -24,14 +24,14 @@ class App extends Component {
     }
   }
 
-  componentWillMount() {  // Component lifecycle method di ReactJS. componentWillMount() adalah phase mounting, tahap sebelum component dirender.
-    if(localStorage && localStorage.getItem('tasks')) {  // getItem() untuk mendapatkan value dari localStorage dalam hal ini adalah 'tasks'.
-      let tasks = JSON.parse(localStorage.getItem('tasks'));  // JSON.parse() untuk mengubah string JSON menjadi javascript object.
-      this.setState({
-        tasks: tasks
-      });
-    }
-  }
+  // componentWillMount() {  // Component lifecycle method di ReactJS. componentWillMount() adalah phase mounting, tahap sebelum component dirender.
+  //   if(localStorage && localStorage.getItem('tasks')) {  // getItem() untuk mendapatkan value dari localStorage dalam hal ini adalah 'tasks'.
+  //     let tasks = JSON.parse(localStorage.getItem('tasks'));  // JSON.parse() untuk mengubah string JSON menjadi javascript object.
+  //     this.setState({
+  //       tasks: tasks
+  //     });
+  //   }
+  // }
 
   _handleGenerateData = () => {
     let tasks = [
@@ -57,13 +57,13 @@ class App extends Component {
     localStorage.setItem('tasks', JSON.stringify(tasks));  // untuk menset localStorage, terdapat 2 parameter keyName dan valueName. JSON.stringify() untuk mengubah javascript object menjadi string JSON
   }
 
-  s4 () { // Fungsi untuk membuat unique id, setiap s4 berisi 4 karakter baik integer maupun number
-    return Math.floor((1+Math.random()) * 0x10000).toString(16).substring(1);
-  }
+  // s4 () { // Fungsi untuk membuat unique id, setiap s4 berisi 4 karakter baik integer maupun number
+  //   return Math.floor((1+Math.random()) * 0x10000).toString(16).substring(1);
+  // }
 
-  generateID () { // Fungsi untuk generate unique id.
-    return this.s4() + this.s4() + '-' + this.s4() + '-' + this.s4() + '-' + this.s4() + '-' + this.s4() + this.s4() + this.s4();
-  }
+  // generateID () { // Fungsi untuk generate unique id.
+  //   return this.s4() + this.s4() + '-' + this.s4() + '-' + this.s4() + '-' + this.s4() + '-' + this.s4() + this.s4() + this.s4();
+  // }
 
   // Fungsi untuk membuka dan menutup form pada tombol tambah pekerjaan. 
   _handleToggleForm = () => {  // Tambahkan pekerjaan
@@ -204,50 +204,57 @@ class App extends Component {
 
   render () {
 
-    const { isDisplayForm, taskEdit, filter, keyword, sortByName, sortByValue } = this.state;
-    let { tasks } = this.state;
+    const { 
+      isDisplayForm, 
+      taskEdit, 
+      // filter, 
+      // keyword, 
+      sortByName, 
+      sortByValue 
+    } = this.state;
+    // let { tasks } = this.state;
     // console.log(filter);
 
     // Render filter berdasarkan name dan status pada TaskList
-    if(filter) {  // Jika filter ada value
-      if(filter.name) { // Jika filter adalah name
-        // tasks = tasks.filter(task => { // Maka data tasks difilter dengan memberi parameter task(nama parameter bebas)
-        //   return task.name.toLowerCase().indexOf(filter.name) !== -1;  // Tampilkan data task name dengan index dari data filter name yang tidak sama dengan -1(all). toLowerCase() method untuk tidak memperdulikan huruf kecil atau besar dan indexOf() untuk menemukan index
-        // }); // Non lodash
-        tasks = _.filter(tasks, task => {  // Lodash
-          return task.name.toLowerCase().indexOf(filter.name) !== -1;
-        });
-      }
-      tasks = tasks.filter(task => {  // Data tasks difilter dengan memberi parameter task(nama parameter bebas)
-        if(filter.status === -1) {  // Jika data filter status sama dengan -1(All)
-          return task; // Tampilkan task
-        }else {  // Jika data filter status tidak sama dengan -1(All)
-          return task.status === (filter.status !== 1 ? true : false)  // Tampilkan data task status sama dengan (jika data filter status tidak sama dengan 1(Tidak Aktif) maka benar/true tampilkan true salah/false tampilkan false)
-        }
-      });
-    }
+    // if(filter) {  // Jika filter ada value
+    //   if(filter.name) { // Jika filter adalah name
+    //     // tasks = tasks.filter(task => { // Maka data tasks difilter dengan memberi parameter task(nama parameter bebas)
+    //     //   return task.name.toLowerCase().indexOf(filter.name) !== -1;  // Tampilkan data task name dengan index dari data filter name yang tidak sama dengan -1(all). toLowerCase() method untuk tidak memperdulikan huruf kecil atau besar dan indexOf() untuk menemukan index
+    //     // }); // Non lodash
+    //     tasks = _.filter(tasks, task => {  // Lodash
+    //       return task.name.toLowerCase().indexOf(filter.name) !== -1;
+    //     });
+    //   }
+    //   tasks = tasks.filter(task => {  // Data tasks difilter dengan memberi parameter task(nama parameter bebas)
+    //     if(filter.status === -1) {  // Jika data filter status sama dengan -1(All)
+    //       return task; // Tampilkan task
+    //     }else {  // Jika data filter status tidak sama dengan -1(All)
+    //       return task.status === (filter.status !== 1 ? true : false)  // Tampilkan data task status sama dengan (jika data filter status tidak sama dengan 1(Tidak Aktif) maka benar/true tampilkan true salah/false tampilkan false)
+    //     }
+    //   });
+    // }
 
     // Render pencarian berdasarkan kata kunci TaskSearch > TaskControl > App
-    if(keyword) { // Jika keyword ada value  
-      tasks = tasks.filter(task => { // Maka data tasks difilter dengan memberi parameter task(nama parameter bebas)
-        return task.name.toLowerCase().indexOf(keyword) !== -1;  // Tampilkan data task name dengan index dari data keyword yang tidak sama dengan -1(all). toLowerCase() method untuk tidak memperdulikan huruf kecil atau besar dan indexOf() untuk menemukan index
-      });
-    }
+    // if(keyword) { // Jika keyword ada value  
+    //   tasks = tasks.filter(task => { // Maka data tasks difilter dengan memberi parameter task(nama parameter bebas)
+    //     return task.name.toLowerCase().indexOf(keyword) !== -1;  // Tampilkan data task name dengan index dari data keyword yang tidak sama dengan -1(all). toLowerCase() method untuk tidak memperdulikan huruf kecil atau besar dan indexOf() untuk menemukan index
+    //   });
+    // }
 
     // Render pengurutan/sort berdasarkan sortByName dan sortByValue TaskSort > TaskControl > App
-    if(sortByName === 'name') {  // Jika sortByName sama dengan 'name'
-      tasks.sort((task, index) => { // Data tasks diurutkan dengan method sort yang berisi parameter task sebagai value dan index sebagai index
-        if(task.name > index.name) return sortByValue; // Jika task.name lebih besar dari index.name, maka tampilkan sortByvalue(1)
-        else if(task.name < index.name) return -sortByValue; // Sebaliknya jika task.name lebih kecil dari index.name, maka tampilkan -sortByValue(-1)
-        else return 0; // Jika kondisi di atas tidak terpenuhi makan return 0 atau data tidak ditemukan. 
-      });
-    }else {  // Pengkondisian lainnya ketika user mengurutkan/sort berdasarkan status
-      tasks.sort((task, index) => {
-        if(task.status > index.status) return -sortByValue;
-        else if(task.status < index.status) return sortByValue;
-        else return 0;
-      });
-    }
+    // if(sortByName === 'name') {  // Jika sortByName sama dengan 'name'
+    //   tasks.sort((task, index) => { // Data tasks diurutkan dengan method sort yang berisi parameter task sebagai value dan index sebagai index
+    //     if(task.name > index.name) return sortByValue; // Jika task.name lebih besar dari index.name, maka tampilkan sortByvalue(1)
+    //     else if(task.name < index.name) return -sortByValue; // Sebaliknya jika task.name lebih kecil dari index.name, maka tampilkan -sortByValue(-1)
+    //     else return 0; // Jika kondisi di atas tidak terpenuhi makan return 0 atau data tidak ditemukan. 
+    //   });
+    // }else {  // Pengkondisian lainnya ketika user mengurutkan/sort berdasarkan status
+    //   tasks.sort((task, index) => {
+    //     if(task.status > index.status) return -sortByValue;
+    //     else if(task.status < index.status) return sortByValue;
+    //     else return 0;
+    //   });
+    // }
 
     const elmTaskForm = isDisplayForm ? 
       <TaskForm 
@@ -292,7 +299,7 @@ class App extends Component {
             />
             {/* List */}
             <TaskList 
-              propsTasksDariApp={tasks} 
+              // propsTasksDariApp={tasks} 
               propsUpdateStatusDariApp={this._handleUpdateStatus}
               propsHandleDeleteDariApp={this._handleDelete}
               propsHandleEditDariApp={this._handleEdit}
